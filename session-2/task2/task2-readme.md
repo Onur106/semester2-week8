@@ -1,6 +1,4 @@
-# Task 3: Creating a Makefile
-
-
+# Task 2: Creating a Makefile
 
 ## Makefile Basics
 A makefile consists of a set of rules, each with the following format:
@@ -20,11 +18,11 @@ target: dependencies
 Create a file named `Makefile` (note: no file extension) with a basic rule to build your student program:
 
 ```make
-student_program: main.c student.c student.h
-	gcc main.c student.c -o student_program
+student_program: main.c student.c student.h structure.h
+	gcc main.c student.c -o student
 ```
 
-This tells make: "To build student_program, you need main.c, student.c, and student.h, 
+This tells make: "To build student, you need main.c, student.c, structure.h and student.h, 
 and the command to build it is gcc main.c student.c -o student_program."
 
 Test this makefile by running:
@@ -39,10 +37,10 @@ Makefiles become more maintainable when you use variables. Add variables for the
 # Variables
 CC = gcc
 CFLAGS = -Wall -Wextra
-TARGET = student_program
+TARGET = student
 
 # Default target
-$(TARGET): main.c student.c student.h
+$(TARGET): main.c student.c student.h structure.h
 	$(CC) $(CFLAGS) main.c student.c -o $(TARGET)
 ```
 
@@ -58,18 +56,18 @@ For larger projects, it's more efficient to compile source files into object fil
 # Variables
 CC = gcc
 CFLAGS = -Wall -Wextra
-TARGET = student_program
+TARGET = student
 OBJS = main.o student.o
 
 # Default target
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+	$(CC) $(OBJS) -o $(TARGET)
 
 # Object files
-main.o: main.c student.h
+main.o: main.c student.h structure.h
 	$(CC) $(CFLAGS) -c main.c
 
-student.o: student.c student.h
+student.o: student.c student.h structure.h
 	$(CC) $(CFLAGS) -c student.c
 ```
 
@@ -98,13 +96,13 @@ OBJS = main.o student.o
 
 # Default target
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+	$(CC) $(OBJS) -o $(TARGET)
 
 # Object files
-main.o: main.c student.h
+main.o: main.c student.h structure.h
 	$(CC) $(CFLAGS) -c main.c
 
-student.o: student.c student.h
+student.o: student.c student.h structure.h
 	$(CC) $(CFLAGS) -c student.c
 
 # Clean up
@@ -137,13 +135,13 @@ OBJS = main.o student.o
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+	$(CC) $(OBJS) -o $(TARGET)
 
 # Object files
-main.o: main.c student.h
+main.o: main.c student.h structure.h
 	$(CC) $(CFLAGS) -c main.c
 
-student.o: student.c student.h
+student.o: student.c student.h structure.h
 	$(CC) $(CFLAGS) -c student.c
 
 # Clean up
@@ -175,10 +173,10 @@ OBJS = main.o student.o
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+	$(CC) $(OBJS) -o $(TARGET)
 
 # Pattern rule for object files
-%.o: %.c student.h
+%.o: %.c student.h structure.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean up
@@ -230,6 +228,7 @@ To fully test your makefile:
 ## Extension Tasks
 
 1. Add a "debug" target that compiles the program with debugging symbols (-g flag)
+- hint: you can create a second variable `DFLAGS= -g` to add debugging 
 2. Create a directory structure with src/, include/, and obj/ folders and update the makefile to handle this structure
 3. Add automatic dependency generation using gcc's -MMD and -MP flags
 4. Add a "run" target that builds and then executes the program
@@ -254,8 +253,3 @@ By the end of this activity, you should be able to:
 - Define dependencies correctly
 - Use variables in makefiles
 - Create both build and utility targets (e.g., clean)
-
-## Background
-In the previous activity, we modularised the student record management program into separate header and implementation files. 
-Now, we'll create a makefile to automate the build process for this project. 
-This will allow us to compile our program with a simple `make` command, and only recompile the necessary files when changes are made.
